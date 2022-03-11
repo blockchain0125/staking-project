@@ -47,6 +47,7 @@ contract Staking {
 	event Withdraw(address staker, uint amount);
     //staker inform
 	struct Staker {
+		uint firstStakingBlock; // block number when first staking
 		uint stakingAmount;  // staking token amount
 		uint lastUpdateTime;  // last amount updatetime
 		uint lastStakeUpdateTime;  // last Stake updatetime
@@ -54,11 +55,12 @@ contract Staking {
 		uint rewards;          // stake amount
 	}
 
+	uint public startStakingTime=1647356400;
+
 	address public tokenAddress;
 
 	uint public totalStakingAmount; // total staking token amount
 
-	uint public startBlockNumber;//the block number when contract created
 	uint public lastUpdateTime; // total stake amount and reward update time
 	uint public totalReward;  // total reward amount
 	uint public totalStake;   // total stake amount
@@ -68,7 +70,6 @@ contract Staking {
 	mapping(address=>Staker) public stakers;
 
 	constructor (address _tokenAddress, uint256 _quota, uint256 _limitReward) {
-		startBlockNumber = block.timestamp; 
 		tokenAddress = _tokenAddress;
 		lastUpdateTime = block.timestamp;
 		quota = _quota*10**IERC20(tokenAddress).decimals();
@@ -113,10 +114,10 @@ contract Staking {
 	}
 
 	function stake(uint amount) external {
-		require((startBlockNumber-block.timestamp).div(86400) >= 7,"staking : you can not stake the token yet");
+		require(block.timestamp >= startStakingTime, "staking : you can not stake yet");
 		address stakerAddress = msg.sender;
 		IERC20(tokenAddress).transferFrom(stakerAddress,address(this),amount);
-		
+		if(stakers[stakerAddress].firstStakingBlock==0) stakers[stakerAddress].firstStakingBlock = block.timestamp;
 		stakers[stakerAddress].stake = countStake(stakerAddress);
 		stakers[stakerAddress].stakingAmount += amount;
 		stakers[stakerAddress].lastUpdateTime = block.timestamp;
@@ -146,7 +147,8 @@ contract Staking {
 		uint _stake = countStake(stakerAddress);
 		uint _reward = countReward(stakerAddress);
 
-		require(_reward>0 && limitReward>0,"staking : reward amount is 0");
+		require((block.timestamp-stakers[stakerAddress].firstStakingBlock).div(86400) >= 7,"claim : you can not claim the token yet");
+		require(_reward>0 && limitReward>0,"claim : reward amount is 0");
 		_reward = limitReward<_reward ? limitReward : _reward;
 		IERC20(tokenAddress).transfer(stakerAddress, _reward);
 		stakers[stakerAddress].rewards += _reward;
