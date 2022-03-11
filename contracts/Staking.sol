@@ -147,7 +147,7 @@ contract Staking {
 		uint _stake = countStake(stakerAddress);
 		uint _reward = countReward(stakerAddress);
 
-		require((block.timestamp-stakers[stakerAddress].firstStakingBlock).div(86400) >= 7,"claim : you can not claim the token yet");
+		require((block.timestamp-stakers[stakerAddress].firstStakingBlock).div(86400) >= 7,"claim : you can not claim the reward yet");
 		require(_reward>0 && limitReward>0,"claim : reward amount is 0");
 		_reward = limitReward<_reward ? limitReward : _reward;
 		IERC20(tokenAddress).transfer(stakerAddress, _reward);
