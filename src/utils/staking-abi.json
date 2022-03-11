@@ -285,6 +285,11 @@
     "outputs": [
       {
         "internalType": "uint256",
+        "name": "firstStakingBlock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "stakingAmount",
         "type": "uint256"
       },
@@ -314,7 +319,7 @@
   },
   {
     "inputs": [],
-    "name": "startBlockNumber",
+    "name": "startStakingTime",
     "outputs": [
       {
         "internalType": "uint256",

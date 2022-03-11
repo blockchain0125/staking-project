@@ -72,8 +72,8 @@ contract Staking {
 	constructor (address _tokenAddress, uint256 _quota, uint256 _limitReward) {
 		tokenAddress = _tokenAddress;
 		lastUpdateTime = block.timestamp;
-		quota = _quota*10**IERC20(tokenAddress).decimals();
-		limitReward = _limitReward*10**IERC20(tokenAddress).decimals();
+		quota = _quota*10**18;
+		limitReward = _limitReward*10**18;
 		ownerConstructor();
 	}
 	function countTotalStake() public view returns (uint _totalStake) {
@@ -130,7 +130,7 @@ contract Staking {
 	function unstaking() external {
 		address stakerAddress = msg.sender;
 		uint amount = stakers[stakerAddress].stakingAmount;
-		require(0 <= amount,"staking : amount over stakeAmount");
+		require(0 < amount,"staking : amount over stakeAmount");
 		IERC20(tokenAddress).transfer(stakerAddress,amount.mul(1000).div(1000));
 		stakers[stakerAddress].stake = countStake(stakerAddress);
 		stakers[stakerAddress].stakingAmount = 0;

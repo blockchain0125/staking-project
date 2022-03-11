@@ -96,6 +96,7 @@ const Stake = () => {
       await stakingTx.wait();
     } catch (error) {
       console.log(error);
+      setWanning(`You can not stake tokens now`);
     }
   };
 
