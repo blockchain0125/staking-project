@@ -310,3 +310,7 @@ export const ClaimRewardBtn = styled.div`
     transform: scale(0.85);
   }
 `;
+
+export const SpanMax = styled.span`
+  cursor: pointer;
+`;

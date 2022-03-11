@@ -24,6 +24,7 @@ import {
   StyledCard,
   RewardBlock,
   ClaimRewardBtn,
+  SpanMax,
 } from './stake.styled';
 import Navbar from '../components/landing/layout/navbar';
 import Footer from '../components/landing/layout/footer';
@@ -39,7 +40,8 @@ const Stake = () => {
   const history = useHistory();
   const [tabActive, setTabActive] = useState('stake');
   const [stakeAmount, setStakeAmount] = useState('');
-  const [warnning, setWanning] = useState('');
+  const [stakeWarnning, setStakeWanning] = useState('');
+  const [claimWarning, setClaimWarning] = useState('');
   const [userInfo, setUserInfo] = useState({ balance: '0', rewardable: '0', rewards: '0', stakingAmount: '0', totalStakingAmount: '0' });
 
   const handleTabClick = tabState => {
@@ -77,10 +79,10 @@ const Stake = () => {
 
   const stake = async () => {
     if (!parseFloat(stakeAmount) || parseFloat(stakeAmount) <= 0) {
-      setWanning('Please input the number of token correctly');
+      setStakeWanning('Please input the number of token correctly');
       return;
     } else if (parseFloat(userInfo.balance) < parseFloat(stakeAmount)) {
-      setWanning(`You have not enough token to stake ${parseFloat(stakeAmount)} tokens`);
+      setStakeWanning(`You have not enough token to stake ${parseFloat(stakeAmount)} tokens`);
       return;
     }
 
@@ -96,7 +98,7 @@ const Stake = () => {
       await stakingTx.wait();
     } catch (error) {
       console.log(error);
-      setWanning(`You can not stake tokens now`);
+      setStakeWanning(`You can not stake tokens`);
     }
   };
 
@@ -121,6 +123,7 @@ const Stake = () => {
       await claimRewardTx.wait();
     } catch (error) {
       console.log(error);
+      setClaimWarning('You can not claim rewards');
     }
   };
 
@@ -155,18 +158,18 @@ const Stake = () => {
                         type="number"
                         placeholder="0.00000000"
                         onChange={e => {
-                          setWanning('');
+                          setStakeWanning('');
                           setStakeAmount(e.target.value);
                         }}
                       />
                       <div>
-                        <span>MAX</span>
+                        <SpanMax onClick={() => setStakeAmount(userInfo.balance)}>MAX</SpanMax>
                         <Icon>
                           <SiBinance />
                         </Icon>
                       </div>
                     </FormInput>
-                    <Wanning>{warnning}</Wanning>
+                    <Wanning>{stakeWarnning}</Wanning>
                   </Form>
                   <StyledButton onClick={() => stake()}>
                     <ButtonLabel>
@@ -177,6 +180,7 @@ const Stake = () => {
                   <Description>Your CLOOT tokens will be locked for 7 days. After that time, you're free to withdraw any time.</Description>
                 </LeftSection>
                 <RightSection>
+                  <Wanning>{claimWarning}</Wanning>
                   <StyledCard>
                     <RewardBlock>
                       <span className="top">Reward</span>
@@ -218,6 +222,7 @@ const Stake = () => {
                   <Description>Your CLOOT tokens will be locked for 7 days. After that time, you're free to withdraw any time.</Description>
                 </LeftSection>
                 <RightSection>
+                  <Wanning>{claimWarning}</Wanning>
                   <StyledCard>
                     <RewardBlock>
                       <span className="top">Reward</span>
